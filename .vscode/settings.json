@@ -1,3 +1,6 @@
 {
-    "conventionalCommits.gitmoji": false
+    "conventionalCommits.gitmoji": false,
+    "conventionalCommits.scopes": [
+        "database"
+    ]
 }

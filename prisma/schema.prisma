@@ -100,7 +100,8 @@ model Code {
 
 /// Section of the library
 model Section {
-    id               String      @id
+    id               Int         @id @default(autoincrement())
+    urlName          String      @unique /// For use in URLs like /section/<urlName>
     friendlyName     String /// e.g. "Fiction"
     friendlyLocation String /// e.g. "2nd floor, left of the staircase"
     partitions       Partition[]
@@ -111,7 +112,7 @@ model Partition {
     id        Int      @id @default(autoincrement())
     Items     Item[]
     Section   Section? @relation(fields: [sectionId], references: [id])
-    sectionId String?
+    sectionId Int?
 }
 
 enum CodeType {
