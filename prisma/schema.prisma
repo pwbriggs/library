@@ -11,7 +11,7 @@ datasource db {
 model Patron {
     id            Int        @id @default(autoincrement())
     joined        DateTime   @default(now())
-    loginName     String
+    loginName     String     @unique
     passwordHash  String
     givenName     String
     familyName    String /// For alphabetizing, sort by "{familyName} {givenName}"
@@ -23,7 +23,7 @@ model Patron {
 
 model Librarian {
     id       Int    @id @default(autoincrement())
-    fullName String
+    fullName String @unique /// Yes, this doesn't *have* to be unique, but it's less confusing.
     activity Log[]
 }
 
@@ -93,7 +93,7 @@ model Author {
 model Code {
     id      Int      @id @default(autoincrement())
     type    CodeType
-    content String
+    content String   @unique
     item    Item     @relation(fields: [itemId], references: [id])
     itemId  Int
 }
@@ -102,7 +102,7 @@ model Code {
 model Section {
     id               Int         @id @default(autoincrement())
     urlName          String      @unique /// For use in URLs like /section/<urlName>
-    friendlyName     String /// e.g. "Fiction"
+    friendlyName     String      @unique /// e.g. "Fiction"
     friendlyLocation String /// e.g. "2nd floor, left of the staircase"
     partitions       Partition[]
 }
