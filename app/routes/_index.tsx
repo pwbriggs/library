@@ -10,9 +10,11 @@ export const meta: MetaFunction = () => {
 export default function Index() {
     return (
         <Stack direction="row" justifyContent="center">
-            <Card color="warning" variant="soft" sx={{ width: 500 }}>
+            <Card color="warning" variant="soft" sx={{ maxWidth: 500, textAlign: "center" }}>
                 <Typography level="h1">🚧 Site under construction 🏗️</Typography>
-                <Typography>We&apos;re still developing this app! Check back soon for more updates.</Typography>
+                <Typography level="body-lg">
+                    We&apos;re still developing this app! Check back soon for more updates.
+                </Typography>
             </Card>
         </Stack>
     );
