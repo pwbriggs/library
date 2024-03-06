@@ -3,6 +3,7 @@
     "type": "module",
     "scripts": {
         "build": "remix build",
+        "postinstall": "prisma generate",
         "start": "remix-serve ./build/index.js",
         "dev": "concurrently \"npm:remixDev\" \"npm:devDb\"",
         "devDb": "postgres -D .dev_db",
