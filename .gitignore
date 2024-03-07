@@ -1,4 +1,8 @@
 node_modules/
+.env
+
+# Local database during development
+/.dev_db
 
 ### Playwright ###
 /test-results/
@@ -11,4 +15,4 @@ node_modules
 /.cache
 /build
 /public/build
-.env
+# .env already listed above

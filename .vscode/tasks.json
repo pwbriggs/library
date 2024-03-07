@@ -1,12 +1,19 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"type": "npm",
-			"script": "dev",
-			"problemMatcher": [],
-			"label": "npm: dev",
-			"detail": "remix dev"
-		}
-	]
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "npm",
+            "script": "dev",
+            "problemMatcher": [],
+            "label": "npm: dev",
+            "detail": "Postgres dev database and Remix dev"
+        },
+        {
+            "label": "Init dev database",
+            "detail": "Requires PostgreSQL to be installed and initdb in path",
+            "type": "shell",
+            "command": "initdb -D .dev_db -U app -E UTF8"
+            // Note that, in production, "app" shouldn't be a superuser. It simplifies things here.
+        },
+    ]
 }

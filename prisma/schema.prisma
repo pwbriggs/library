@@ -1,0 +1,132 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+/// A patron (as distinct from a librarian)
+model Patron {
+    id            Int        @id @default(autoincrement())
+    joined        DateTime   @default(now())
+    loginName     String     @unique
+    passwordHash  String
+    givenName     String
+    familyName    String /// For alphabetizing, sort by "{familyName} {givenName}"
+    preferredName String /// What to call the user in casual circumstances
+    fullName      String /// Not necessarily "{givenName} {familyName}" -- for advanced menus
+    checkouts     Checkout[]
+    Log           Log[]
+}
+
+model Librarian {
+    id       Int    @id @default(autoincrement())
+    fullName String @unique /// Yes, this doesn't *have* to be unique, but it's less confusing.
+    activity Log[]
+}
+
+model Log {
+    id          Int        @id @default(autoincrement())
+    eventTime   DateTime   @default(now())
+    comment     String?
+    type        LogType
+    librarian   Librarian? @relation(fields: [librarianId], references: [id])
+    librarianId Int?
+    item        Item?      @relation(fields: [itemId], references: [id])
+    itemId      Int?
+    patron      Patron?    @relation(fields: [patronId], references: [id])
+    patronId    Int?
+    checkout    Checkout?  @relation(fields: [checkoutId], references: [id])
+    checkoutId  Int?
+}
+
+enum LogType {
+    CHECK_OUT
+    CHECK_IN
+    CHECKOUT_UNKNOWN /// An unrecognized code was used at checkout
+    CHECKIN_UNKNOWN /// An unrecognized code was used at checkin
+    ADD_ITEM
+    CHANGE_ITEM
+    ADD_PATRON
+    CHANGE_PATRON
+}
+
+model Item {
+    id                 Int        @id @default(autoincrement())
+    type               ItemType
+    location           Partition  @relation(fields: [partitionId], references: [id])
+    partitionId        Int
+    title              String /// The title of the item, not including any subtitle.
+    subtitle           String?
+    authors            Author[]
+    description        String?
+    publishedYear      Int?
+    metadataUnreviewed Boolean /// Was the item metadata added automatically and not reviewed?
+    codes              Code[]
+    checkouts          Checkout[]
+    addedAt            DateTime   @default(now())
+    updatedAt          DateTime   @updatedAt
+    history            Log[]
+}
+
+model Checkout {
+    id         Int       @id @default(autoincrement())
+    item       Item      @relation(fields: [itemId], references: [id])
+    itemId     Int
+    patron     Patron    @relation(fields: [patronId], references: [id])
+    patronId   Int
+    outTime    DateTime  @default(now())
+    dueTime    DateTime
+    returnTime DateTime?
+    logs       Log[]
+}
+
+model Author {
+    id         Int    @id @default(autoincrement())
+    givenName  String
+    familyName String
+    items      Item[]
+}
+
+model Code {
+    id      Int      @id @default(autoincrement())
+    type    CodeType
+    content String   @unique
+    item    Item     @relation(fields: [itemId], references: [id])
+    itemId  Int
+}
+
+/// Section of the library
+model Section {
+    id               Int         @id @default(autoincrement())
+    urlName          String      @unique /// For use in URLs like /section/<urlName>
+    friendlyName     String      @unique /// e.g. "Fiction"
+    friendlyLocation String /// e.g. "2nd floor, left of the staircase"
+    partitions       Partition[]
+}
+
+/// A small unit of a section. No human-readable attributes -- should only be shown in a diagram
+model Partition {
+    id        Int      @id @default(autoincrement())
+    Items     Item[]
+    Section   Section? @relation(fields: [sectionId], references: [id])
+    sectionId Int?
+}
+
+enum CodeType {
+    ISBN10
+    ISBN13
+    UPC
+    IN_HOUSE
+    OTHER
+    UNKNOWN
+}
+
+enum ItemType {
+    BOOK
+    MAGAZINE
+    CD_OR_DVD
+    GAME
+}
