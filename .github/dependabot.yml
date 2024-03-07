@@ -16,3 +16,7 @@ updates:
           - "react-dom"
           - "@types/react"
           - "@types/react-dom"
+      prisma:
+        patterns:
+          - "prisma"
+          - "@prisma/client"
