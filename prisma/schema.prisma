@@ -7,39 +7,31 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-/// A patron (as distinct from a librarian)
-model Patron {
+model User {
     id            Int        @id @default(autoincrement())
+    isLibrarian   Boolean
+    isAdmin       Boolean
     joined        DateTime   @default(now())
     loginName     String     @unique
-    passwordHash  String
     givenName     String
     familyName    String /// For alphabetizing, sort by "{familyName} {givenName}"
     preferredName String /// What to call the user in casual circumstances
     fullName      String /// Not necessarily "{givenName} {familyName}" -- for advanced menus
     checkouts     Checkout[]
-    Log           Log[]
-}
-
-model Librarian {
-    id       Int    @id @default(autoincrement())
-    fullName String @unique /// Yes, this doesn't *have* to be unique, but it's less confusing.
-    activity Log[]
+    activity      Log[]
 }
 
 model Log {
-    id          Int        @id @default(autoincrement())
-    eventTime   DateTime   @default(now())
-    comment     String?
-    type        LogType
-    librarian   Librarian? @relation(fields: [librarianId], references: [id])
-    librarianId Int?
-    item        Item?      @relation(fields: [itemId], references: [id])
-    itemId      Int?
-    patron      Patron?    @relation(fields: [patronId], references: [id])
-    patronId    Int?
-    checkout    Checkout?  @relation(fields: [checkoutId], references: [id])
-    checkoutId  Int?
+    id         Int       @id @default(autoincrement())
+    eventTime  DateTime  @default(now())
+    comment    String?
+    type       LogType
+    item       Item?     @relation(fields: [itemId], references: [id])
+    itemId     Int?
+    user       User?     @relation(fields: [userId], references: [id])
+    userId     Int?
+    checkout   Checkout? @relation(fields: [checkoutId], references: [id])
+    checkoutId Int?
 }
 
 enum LogType {
@@ -51,6 +43,10 @@ enum LogType {
     CHANGE_ITEM
     ADD_PATRON
     CHANGE_PATRON
+    ADD_LIBRARIAN
+    CHANGE_LIBRARIAN
+    ADD_ADMIN
+    CHANGE_ADMIN
 }
 
 model Item {
@@ -75,8 +71,8 @@ model Checkout {
     id         Int       @id @default(autoincrement())
     item       Item      @relation(fields: [itemId], references: [id])
     itemId     Int
-    patron     Patron    @relation(fields: [patronId], references: [id])
-    patronId   Int
+    user       User      @relation(fields: [userId], references: [id])
+    userId     Int
     outTime    DateTime  @default(now())
     dueTime    DateTime
     returnTime DateTime?
