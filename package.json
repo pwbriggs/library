@@ -43,6 +43,6 @@
         "eslint-plugin-react": "^7.34.1",
         "eslint-plugin-react-hooks": "^4.6.0",
         "prisma": "^5.11.0",
-        "typescript": "^5.4.2"
+        "typescript": "^5.4.3"
     }
 }
