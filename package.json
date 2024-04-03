@@ -16,10 +16,10 @@
     "license": "MIT",
     "dependencies": {
         "@emotion/react": "^11.11.4",
-        "@emotion/styled": "^11.11.0",
+        "@emotion/styled": "^11.11.5",
         "@fontsource/inter": "^5.0.17",
         "@mui/joy": "^5.0.0-beta.32",
-        "@prisma/client": "^5.11.0",
+        "@prisma/client": "^5.12.0",
         "@remix-run/css-bundle": "^2.8.1",
         "@remix-run/node": "^2.8.1",
         "@remix-run/react": "^2.8.1",
@@ -31,10 +31,10 @@
     "devDependencies": {
         "@playwright/test": "^1.42.1",
         "@remix-run/dev": "^2.8.1",
-        "@types/node": "^20.11.30",
-        "@types/react": "^18.2.71",
-        "@types/react-dom": "^18.2.22",
-        "@typescript-eslint/eslint-plugin": "^7.4.0",
+        "@types/node": "^20.12.3",
+        "@types/react": "^18.2.74",
+        "@types/react-dom": "^18.2.23",
+        "@typescript-eslint/eslint-plugin": "^7.5.0",
         "concurrently": "^8.2.2",
         "eslint": "^8.57.0",
         "eslint-import-resolver-typescript": "^3.6.1",
@@ -42,7 +42,7 @@
         "eslint-plugin-jsx-a11y": "^6.7.1",
         "eslint-plugin-react": "^7.34.1",
         "eslint-plugin-react-hooks": "^4.6.0",
-        "prisma": "^5.11.0",
+        "prisma": "^5.12.0",
         "typescript": "^5.4.3"
     }
 }
