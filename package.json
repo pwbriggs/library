@@ -19,7 +19,7 @@
         "@emotion/styled": "^11.11.5",
         "@fontsource/inter": "^5.0.18",
         "@mui/joy": "^5.0.0-beta.36",
-        "@prisma/client": "^5.13.0",
+        "@prisma/client": "^5.14.0",
         "@remix-run/css-bundle": "^2.9.2",
         "@remix-run/node": "^2.9.2",
         "@remix-run/react": "^2.9.2",
@@ -31,10 +31,10 @@
     "devDependencies": {
         "@playwright/test": "^1.44.0",
         "@remix-run/dev": "^2.9.2",
-        "@types/node": "^20.12.11",
+        "@types/node": "^20.12.12",
         "@types/react": "^18.3.2",
         "@types/react-dom": "^18.3.0",
-        "@typescript-eslint/eslint-plugin": "^7.8.0",
+        "@typescript-eslint/eslint-plugin": "^7.9.0",
         "concurrently": "^8.2.2",
         "eslint": "^8.57.0",
         "eslint-import-resolver-typescript": "^3.6.1",
@@ -42,7 +42,7 @@
         "eslint-plugin-jsx-a11y": "^6.7.1",
         "eslint-plugin-react": "^7.34.1",
         "eslint-plugin-react-hooks": "^4.6.2",
-        "prisma": "^5.13.0",
+        "prisma": "^5.14.0",
         "typescript": "^5.4.5"
     }
 }
