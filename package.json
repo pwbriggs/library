@@ -31,10 +31,10 @@
     "devDependencies": {
         "@playwright/test": "^1.44.1",
         "@remix-run/dev": "^2.9.2",
-        "@types/node": "^20.14.2",
+        "@types/node": "^20.14.5",
         "@types/react": "^18.3.3",
         "@types/react-dom": "^18.3.0",
-        "@typescript-eslint/eslint-plugin": "^7.13.0",
+        "@typescript-eslint/eslint-plugin": "^7.13.1",
         "concurrently": "^8.2.2",
         "eslint": "^8.57.0",
         "eslint-import-resolver-typescript": "^3.6.1",
