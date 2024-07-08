@@ -18,7 +18,7 @@
         "@emotion/react": "^11.11.4",
         "@emotion/styled": "^11.11.5",
         "@fontsource/inter": "^5.0.19",
-        "@mui/joy": "^5.0.0-beta.36",
+        "@mui/joy": "^5.0.0-beta.47",
         "@prisma/client": "^5.16.1",
         "@remix-run/css-bundle": "^2.10.2",
         "@remix-run/node": "^2.10.2",
@@ -31,7 +31,7 @@
     "devDependencies": {
         "@playwright/test": "^1.45.1",
         "@remix-run/dev": "^2.10.2",
-        "@types/node": "^20.14.9",
+        "@types/node": "^20.14.10",
         "@types/react": "^18.3.3",
         "@types/react-dom": "^18.3.0",
         "@typescript-eslint/eslint-plugin": "^7.15.0",
