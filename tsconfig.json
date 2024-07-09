@@ -13,6 +13,12 @@
         "isolatedModules": true,
         "esModuleInterop": true,
         "jsx": "react-jsx",
+        "types": [
+            "@remix-run/node",
+            "vite/client"
+        ],
+        "skipLibCheck": true,
+        "module": "ESNext",
         "moduleResolution": "Bundler",
         "resolveJsonModule": true,
         "target": "ES2022",
