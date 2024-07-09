@@ -6,7 +6,7 @@ import {
     ScrollRestoration,
 } from "@remix-run/react";
 
-import { ColorSchemeScript, MantineProvider, Box, Text } from '@mantine/core';
+import { ColorSchemeScript, MantineProvider, Box } from '@mantine/core';
 import '@mantine/core/styles.css';
 
 export default function App() {
