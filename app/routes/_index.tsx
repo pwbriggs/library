@@ -1,4 +1,4 @@
-import { Card, Stack, Typography } from "@mui/joy";
+import { Box, Center, Text } from "@mantine/core";
 import type { MetaFunction } from "@remix-run/node";
 
 export const meta: MetaFunction = () => {
@@ -9,13 +9,13 @@ export const meta: MetaFunction = () => {
 
 export default function Index() {
     return (
-        <Stack direction="row" justifyContent="center">
-            <Card color="warning" variant="soft" sx={{ maxWidth: 500, textAlign: "center" }}>
-                <Typography level="h1">🚧 Site under construction 🏗️</Typography>
-                <Typography level="body-lg">
+        <Center>
+            <Box color="warning" bg="red.2" ta="center" my="sm" p="lg">
+                <Text fw="bold">🚧 Site under construction 🏗️</Text>
+                <Text>
                     We&apos;re still developing this app! Check back soon for more updates.
-                </Typography>
-            </Card>
-        </Stack>
+                </Text>
+            </Box>
+        </Center>
     );
 }

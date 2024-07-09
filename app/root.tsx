@@ -1,18 +1,13 @@
-import { Box, Typography } from "@mui/joy";
-import { cssBundleHref } from "@remix-run/css-bundle";
-import type { LinksFunction } from "@remix-run/node";
 import {
     Links,
-    LiveReload,
     Meta,
     Outlet,
     Scripts,
     ScrollRestoration,
 } from "@remix-run/react";
 
-export const links: LinksFunction = () => [
-    ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
-];
+import { ColorSchemeScript, MantineProvider, Box } from '@mantine/core';
+import '@mantine/core/styles.css';
 
 export default function App() {
     return (
@@ -22,27 +17,20 @@ export default function App() {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <Meta />
                 <Links />
+                <ColorSchemeScript />
             </head>
             <body style={{ margin: 0, padding: 0, overflowWrap: "break-word" }}>
-                <Box sx={{
-                    bgcolor: 'danger.100',
-                    padding: "1rem 2rem",
-                    marginBottom: 2,
-                    textAlign: "center"
-                }}>
-                    <Typography level="body-lg">
-                        <Typography fontWeight="bold">
+                <MantineProvider>
+                    <Box bg="yellow.2" p="sm" ta="center">
+                        <b>
                             ⚠️ Site under construction 🏗️
-                        </Typography>{" "}
-                        We&apos;re still in the initial early development stage. All pages on this
-                        site are{" "}
-                        <Typography fontWeight="bold">tests only.</Typography>
-                    </Typography>
-                </Box>
-                <Outlet />
+                        </b> We&apos;re still in the initial early development stage. All pages on this
+                        site are <strong>tests only.</strong>
+                    </Box>
+                    <Outlet />
+                </MantineProvider>
                 <ScrollRestoration />
                 <Scripts />
-                <LiveReload />
             </body>
         </html>
     );
