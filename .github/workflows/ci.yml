@@ -61,6 +61,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4.0.0
+        with:
+          version: 9
       - name: Install dependencies
         run: pnpm install
       - name: Run ESLint tests (with TypeScript)
