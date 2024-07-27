@@ -39,12 +39,12 @@
         "eslint-plugin-jsx-a11y": "^6.9.0",
         "eslint-plugin-react": "^7.35.0",
         "eslint-plugin-react-hooks": "^4.6.2",
-        "postcss": "^8.4.39",
+        "postcss": "^8.4.40",
         "postcss-preset-mantine": "^1.17.0",
         "postcss-simple-vars": "^7.0.1",
         "prisma": "^5.17.0",
         "typescript": "^5.5.4",
-        "vite": "^5.3.4",
+        "vite": "^5.3.5",
         "vite-tsconfig-paths": "^4.3.2"
     }
 }
