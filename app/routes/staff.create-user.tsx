@@ -295,7 +295,7 @@ export async function action({ request }: ActionFunctionArgs) {
             return accumulator;
         }
         return { ...accumulator, [fieldName]: field };
-    }, {} as { [fieldName in keyof UserInfo]?: string });
+    }, {} as Partial<UserInfo>);
 
     if (hasErrors) {
         return json({ errors });
