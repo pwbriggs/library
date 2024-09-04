@@ -22,8 +22,79 @@ type UserInfo = {
     accountType: "normal" | "librarian" | "admin",
 }
 
-export default function Screen() {
+type Errors = {
+    global: string[],
+    fields: { [fieldName in keyof UserInfo]: string }
+}
+
+enum AccountType {
+    Normal = "normal",
+    Librarian = "librarian",
+    Admin = "admin",
+}
+
+export default function CreateUser() {
     const actionData = useActionData<typeof action>();
+    const [accountType, setAccountType] = useState(AccountType.Normal);
+    const [scriptPrompts, setScriptPrompts] = useState(false);
+    return (
+        <Center>
+            <Box miw="min(70%, 40rem)">
+                <Text component="h1" fw="bold" size="lg" mb="md">Create user account</Text>
+                <Text fs="italic">Note: temporarily available without actor authentication.</Text>
+                <Checkbox
+                    label="Show script prompts"
+                    checked={scriptPrompts}
+                    onChange={(e) => setScriptPrompts(e.currentTarget.checked)}
+                    mb="sm"
+                />
+                <Form method="post">
+                    <CollectUserInfo errors={actionData?.errors} scriptPrompts={scriptPrompts} />
+                    <details>
+                        <summary>Change account type</summary>
+                        <Fieldset legend="Account type">
+                            <SegmentedControl
+                                value={accountType}
+                                onChange={(accountType) => {
+                                    setAccountType(accountType as AccountType);
+                                }}
+                                data={[
+                                    { label: "Patron", value: "normal" },
+                                    { label: "Librarian", value: "librarian" },
+                                    { label: "Admin", value: "admin" },
+                                ]}
+                            />
+                            {accountType != AccountType.Normal &&
+                                <Text fw="bold">Are you sure? Is this account for a staff member?</Text>
+                            }
+                            <input
+                                type="hidden"
+                                name="accountType"
+                                value={accountType}
+                            />
+                        </Fieldset>
+                    </details>
+                    <Button mt="sm" type="submit" rightSection={<IconChevronRight />}>
+                        Create{accountType != AccountType.Normal && " staff"} account
+                    </Button>
+                    {actionData?.errors && actionData.errors.global.length > 0 && <>
+                        <Text fw="bold">
+                            Unexpected error{actionData.errors.global.length != 1 && "s"} while creating user
+                        </Text>
+                        <details>
+                            <List size="sm">
+                                {actionData.errors.global.map(message => <List.Item key={message}>{message}</List.Item>)}
+                            </List>
+                        </details>
+                        <Text fs="italic">Please reload the page and try again, or contact your IT administrator.</Text>
+                    </>}
+                </Form>
+            </Box>
+        </Center>
+    );
+}
+
+export function CollectUserInfo({ scriptPrompts, errors }: { scriptPrompts?: boolean, errors?: Errors }) {
     const [userInfo, setUserInfo] = useState<UserInfo>({
         givenName: "",
         familyName: "",
@@ -34,7 +105,7 @@ export default function Screen() {
         accountType: "normal",
     }); // Note that state will be out of date for fields with autoFields on
     const [autoFields, setAutoFields] = useState({ fullName: true, preferredName: true, username: true });
-    const [scriptPrompts, setScriptPrompts] = useState(false);
+
     const script = {
         givenName: "(\"What's your full name?\" & context\u2014incl. middle names)",
         familyName: "(\"So your [last]? name is...?\")",
@@ -42,7 +113,8 @@ export default function Screen() {
         preferredName: "(Confirm default with \"And we should call you...?\")",
         username: "(Prefer autofilled for consistency)"
     }
-    function suggestUsername(user: typeof userInfo): string {
+
+    function suggestUsername(user: UserInfo): string {  // Simple algorithm for suggesting short usernames
         let suggestion = user.givenName && user.givenName.trim()[0] + user.familyName.replaceAll(/[^\w_]+/g, "");
         if (suggestion.length < 4) {
             const concat = user.givenName.replaceAll(/[^\w_]+/g, "") + user.familyName.replaceAll(/[^\w_]+/g, "");
@@ -63,181 +135,128 @@ export default function Screen() {
         }
         return suggestion.toLowerCase();
     }
+
     return (
-        <Center>
-            <Box miw="min(70%, 40rem)">
-                <Text component="h1" fw="bold" size="lg" mb="md">Create user account</Text>
-                <Text fs="italic">Note: temporarily available without actor authentication.</Text>
-                <Checkbox
-                    label="Show script prompts"
-                    checked={scriptPrompts}
-                    onChange={(e) => setScriptPrompts(e.currentTarget.checked)}
-                    mb="sm"
+        <>
+            <Fieldset legend="Name">
+                <Group align="start">
+                    <TextInput
+                        flex={scriptPrompts ? 1 : 0}
+                        label={`Given ${scriptPrompts ? script.givenName : ""}`.trimEnd()}
+                        name="givenName"
+                        autoComplete="off"
+                        required
+                        onChange={e => setUserInfo({ ...userInfo, givenName: e.currentTarget.value })}
+                        value={userInfo.givenName}
+                        error={errors?.fields.givenName}
+                    />
+                    <TextInput
+                        label={`Family ${scriptPrompts ? script.familyName : ""}`.trimEnd()}
+                        name="familyName"
+                        autoComplete="off"
+                        required
+                        onChange={e => setUserInfo({ ...userInfo, familyName: e.currentTarget.value })}
+                        value={userInfo.familyName}
+                        error={errors?.fields.familyName}
+                    />
+                </Group>
+                <Group align="end">
+                    <TextInput
+                        flex={1}
+                        label={`Full ${scriptPrompts ? script.fullName : ""}`.trimEnd()}
+                        name="fullName"
+                        autoComplete="off"
+                        required
+                        onChange={(e) => {
+                            setUserInfo({ ...userInfo, fullName: e.currentTarget.value });
+                            setAutoFields({ ...autoFields, fullName: false });
+                        }}
+                        value={autoFields.fullName ? `${userInfo.givenName} ${userInfo.familyName}`.trim() : userInfo.fullName}
+                        error={errors?.fields.fullName}
+                    />
+                    {!autoFields.fullName &&
+                        <Button
+                            variant="subtle"
+                            color="grey"
+                            px="xs"
+                            leftSection={<IconArrowBackUp />}
+                            onClick={() => setAutoFields({ ...autoFields, fullName: true })}
+                        >
+                            Default
+                        </Button>
+                    }
+                </Group>
+                <Group align="end">
+                    <TextInput
+                        flex={1}
+                        label={`Preferred ${scriptPrompts ? script.preferredName : ""}`.trimEnd()}
+                        name="preferredName"
+                        autoComplete="off"
+                        required
+                        onChange={(e) => {
+                            setUserInfo({ ...userInfo, preferredName: e.currentTarget.value });
+                            setAutoFields({ ...autoFields, preferredName: false });
+                        }}
+                        value={autoFields.preferredName ? userInfo.givenName.split(" ")[0] : userInfo.preferredName}
+                        error={errors?.fields.preferredName}
+                    />
+                    {!autoFields.preferredName &&
+                        <Button
+                            variant="subtle"
+                            color="grey"
+                            px="xs"
+                            leftSection={<IconArrowBackUp />}
+                            onClick={() => setAutoFields({ ...autoFields, preferredName: true })}
+                        >
+                            Default
+                        </Button>
+                    }
+                </Group>
+            </Fieldset>
+            <Fieldset legend="Login information">
+                <Group align="end">
+                    <TextInput
+                        flex={1}
+                        label={`Username ${scriptPrompts ? script.username : ""}`.trimEnd()}
+                        name="username"
+                        autoComplete="off"
+                        required
+                        onChange={(e) => {
+                            setUserInfo({ ...userInfo, username: e.currentTarget.value });
+                            setAutoFields({ ...autoFields, username: false });
+                        }}
+                        value={autoFields.username ? suggestUsername(userInfo) : userInfo.username}
+                        error={errors?.fields.username}
+                    />
+                    {!autoFields.username &&
+                        <Button
+                            variant="subtle"
+                            color="grey"
+                            px="xs"
+                            leftSection={<IconArrowBackUp />}
+                            onClick={() => setAutoFields({ ...autoFields, username: true })}
+                        >
+                            Default
+                        </Button>
+                    }
+                </Group>
+                <PasswordInput
+                    label="Password"
+                    name="password"
+                    autoComplete="off"
+                    required
+                    onChange={e => setUserInfo({ ...userInfo, password: e.currentTarget.value })}
+                    value={userInfo.password}
+                    error={errors?.fields.password}
                 />
-                <Form method="post">
-                    <Fieldset legend="Name">
-                        <Group align="start">
-                            <TextInput
-                                flex={1}
-                                label={`Given ${scriptPrompts ? script.givenName : ""}`.trimEnd()}
-                                name="givenName"
-                                autoComplete="off"
-                                required
-                                onChange={e => setUserInfo({ ...userInfo, givenName: e.currentTarget.value })}
-                                value={userInfo.givenName}
-                                error={actionData?.errors?.fields.givenName}
-                            />
-                            <TextInput
-                                label={`Family ${scriptPrompts ? script.familyName : ""}`.trimEnd()}
-                                name="familyName"
-                                autoComplete="off"
-                                required
-                                onChange={e => setUserInfo({ ...userInfo, familyName: e.currentTarget.value })}
-                                value={userInfo.familyName}
-                                error={actionData?.errors?.fields.familyName}
-                            />
-                        </Group>
-                        <Group align="end">
-                            <TextInput
-                                flex={1}
-                                label={`Full ${scriptPrompts ? script.fullName : ""}`.trimEnd()}
-                                name="fullName"
-                                autoComplete="off"
-                                required
-                                onChange={(e) => {
-                                    setUserInfo({ ...userInfo, fullName: e.currentTarget.value });
-                                    setAutoFields({ ...autoFields, fullName: false });
-                                }}
-                                value={autoFields.fullName ? `${userInfo.givenName} ${userInfo.familyName}`.trim() : userInfo.fullName}
-                                error={actionData?.errors?.fields.fullName}
-                            />
-                            {!autoFields.fullName &&
-                                <Button
-                                    variant="subtle"
-                                    color="grey"
-                                    px="xs"
-                                    leftSection={<IconArrowBackUp />}
-                                    onClick={() => setAutoFields({ ...autoFields, fullName: true })}
-                                >
-                                    Default
-                                </Button>
-                            }
-                        </Group>
-                        <Group align="end">
-                            <TextInput
-                                flex={1}
-                                label={`Preferred ${scriptPrompts ? script.preferredName : ""}`.trimEnd()}
-                                name="preferredName"
-                                autoComplete="off"
-                                required
-                                onChange={(e) => {
-                                    setUserInfo({ ...userInfo, preferredName: e.currentTarget.value });
-                                    setAutoFields({ ...autoFields, preferredName: false });
-                                }}
-                                value={autoFields.preferredName ? userInfo.givenName.split(" ")[0] : userInfo.preferredName}
-                                error={actionData?.errors?.fields.preferredName}
-                            />
-                            {!autoFields.preferredName &&
-                                <Button
-                                    variant="subtle"
-                                    color="grey"
-                                    px="xs"
-                                    leftSection={<IconArrowBackUp />}
-                                    onClick={() => setAutoFields({ ...autoFields, preferredName: true })}
-                                >
-                                    Default
-                                </Button>
-                            }
-                        </Group>
-                    </Fieldset>
-                    <Fieldset legend="Login information">
-                        <Group align="end">
-                            <TextInput
-                                flex={1}
-                                label={`Username ${scriptPrompts ? script.username : ""}`.trimEnd()}
-                                name="username"
-                                autoComplete="off"
-                                required
-                                onChange={(e) => {
-                                    setUserInfo({ ...userInfo, username: e.currentTarget.value });
-                                    setAutoFields({ ...autoFields, username: false });
-                                }}
-                                value={autoFields.username ? suggestUsername(userInfo) : userInfo.username}
-                                error={actionData?.errors?.fields.username}
-                            />
-                            {!autoFields.username &&
-                                <Button
-                                    variant="subtle"
-                                    color="grey"
-                                    px="xs"
-                                    leftSection={<IconArrowBackUp />}
-                                    onClick={() => setAutoFields({ ...autoFields, username: true })}
-                                >
-                                    Default
-                                </Button>
-                            }
-                        </Group>
-                        <PasswordInput
-                            label="Password"
-                            name="password"
-                            autoComplete="off"
-                            required
-                            onChange={e => setUserInfo({ ...userInfo, password: e.currentTarget.value })}
-                            value={userInfo.password}
-                            error={actionData?.errors?.fields.password}
-                        />
-                    </Fieldset>
-                    <details>
-                        <summary>Change account type</summary>
-                        <Fieldset legend="Account type">
-                            <SegmentedControl
-                                value={userInfo.accountType}
-                                onChange={(accountType) => {
-                                    if (accountType == "normal" || accountType == "librarian" || accountType == "admin") {
-                                        setUserInfo({ ...userInfo, accountType });
-                                    } else {
-                                        console.warn(`Not setting unknown account type "${accountType}"`)
-                                    }
-                                }}
-                                data={[
-                                    { label: "Patron", value: "normal" },
-                                    { label: "Librarian", value: "librarian" },
-                                    { label: "Admin", value: "admin" },
-                                ]}
-                            />
-                            {userInfo.accountType != "normal" &&
-                                <Text fw="bold">Are you sure? Is this account for a staff member?</Text>
-                            }
-                            <input
-                                type="hidden"
-                                name="accountType"
-                                value={userInfo.accountType}
-                            />
-                        </Fieldset>
-                    </details>
-                    <Button mt="sm" type="submit" rightSection={<IconChevronRight />}>
-                        Create{userInfo.accountType != "normal" && " staff"} account
-                    </Button>
-                    {actionData?.errors && actionData.errors.global.length > 0 && <>
-                        <Text fw="bold">
-                            Unexpected error{actionData.errors.global.length != 1 && "s"} while creating user
-                        </Text>
-                        <details>
-                            <List size="sm">
-                                {actionData.errors.global.map(message => <List.Item>{message}</List.Item>)}
-                            </List>
-                        </details>
-                        <Text fs="italic">Please reload the page and try again, or contact your IT administrator.</Text>
-                    </>}
-                </Form>
-            </Box>
-        </Center>
+            </Fieldset>
+        </>
     );
 }
 
 export async function action({ request }: ActionFunctionArgs) {
     let hasErrors = false;
-    let errors = {
+    const errors = {
         global: [],
         fields: {
             givenName: "",
@@ -248,10 +267,7 @@ export async function action({ request }: ActionFunctionArgs) {
             password: "",
             accountType: "",
         },
-    } as {
-        global: string[],
-        fields: { [fieldName in keyof UserInfo]: string }
-    };
+    } as Errors;
     function addError(location: keyof UserInfo | "global", message: string) {
         if (location == "global") {
             errors.global.push(message);
