@@ -141,7 +141,7 @@ export function CollectUserInfo({ scriptPrompts, errors }: { scriptPrompts?: boo
             <Fieldset legend="Name">
                 <Group align="start">
                     <TextInput
-                        flex={scriptPrompts ? 1 : 0}
+                        flex={1}
                         label={`Given ${scriptPrompts ? script.givenName : ""}`.trimEnd()}
                         name="givenName"
                         autoComplete="off"
@@ -151,6 +151,7 @@ export function CollectUserInfo({ scriptPrompts, errors }: { scriptPrompts?: boo
                         error={errors?.fields.givenName}
                     />
                     <TextInput
+                        flex={scriptPrompts ? undefined : 1}
                         label={`Family ${scriptPrompts ? script.familyName : ""}`.trimEnd()}
                         name="familyName"
                         autoComplete="off"
