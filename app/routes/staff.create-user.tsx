@@ -1,9 +1,10 @@
 import { Center, TextInput, Group, Text, Button, Box, Fieldset, Checkbox, SegmentedControl, PasswordInput, List, ThemeIcon } from "@mantine/core";
 import { IconArrowBackUp, IconChevronRight } from "@tabler/icons-react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { Form, json, MetaFunction, redirect, useActionData } from "@remix-run/react";
+import { Form, json, MetaFunction, redirect, useActionData, useLoaderData } from "@remix-run/react";
 import { useState } from "react";
 import { CreateUserErrors, createUserFromForm, UserInfo } from "~/scripts/create-user.server";
+import { auth } from "~/scripts/auth.server";
 
 export const meta: MetaFunction = () => {
     return [
@@ -19,13 +20,13 @@ enum AccountType {
 
 export default function CreateUser() {
     const actionData = useActionData<typeof action>();
+    const { actor } = useLoaderData<typeof loader>()
     const [accountType, setAccountType] = useState(AccountType.Normal);
     const [scriptPrompts, setScriptPrompts] = useState(false);
     return (
         <Center>
             <Box miw="min(70%, 40rem)">
                 <Text component="h1" fw="bold" size="lg" mb="md">Create user account</Text>
-                <Text fs="italic">Note: temporarily available without actor authentication.</Text>
                 <Checkbox
                     label="Show script prompts"
                     checked={scriptPrompts}
@@ -37,6 +38,9 @@ export default function CreateUser() {
                     <details>
                         <summary>Change account type</summary>
                         <Fieldset legend="Account type">
+                            {!actor?.isAdmin &&
+                                <Text fs="italic" c="red">This option is only available to admins.</Text>
+                            }
                             <SegmentedControl
                                 value={accountType}
                                 onChange={(accountType) => {
@@ -47,6 +51,8 @@ export default function CreateUser() {
                                     { label: "Librarian", value: "librarian" },
                                     { label: "Admin", value: "admin" },
                                 ]}
+                                disabled={!actor?.isAdmin}
+                                my="sm"
                             />
                             {accountType != AccountType.Normal &&
                                 <Text fw="bold">Are you sure? Is this account for a staff member?</Text>
@@ -239,7 +245,7 @@ export function CollectUserInfo({ scriptPrompts, errors }: { scriptPrompts?: boo
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-    const { hasErrors, errors, username } = await createUserFromForm(await request.formData());
+    const { hasErrors, errors, username } = await createUserFromForm(await request.formData(), request);
     if (hasErrors) {
         return json({ errors });
     }
@@ -247,6 +253,5 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-    // Do librarian check here
-    return null;
+    return json({ actor: await auth.isAuthenticated(request) });
 }

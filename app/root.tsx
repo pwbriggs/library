@@ -60,7 +60,7 @@ export async function action({ request }: ActionFunctionArgs): Promise<{status: 
     const otp = formData.get("otp");
     if (typeof otp == "string" && checkOtp(otp)) {
         if (typeof formData.get("username") == "string") { // If the user might be on the second stage
-            const { hasErrors, errors } = await createUserFromForm(formData, true);
+            const { hasErrors, errors } = await createUserFromForm(formData, request, true);
             if (hasErrors) {
                 return json({ status: AppSetupState.CreateUser, errors: errors });
             }

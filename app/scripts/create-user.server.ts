@@ -1,6 +1,7 @@
 import { prisma } from "~/scripts/prisma.server";
 import { createUsernamePasswordCredential } from "~/scripts/password.server";
 import { checkOtp } from "./setup.server";
+import { auth } from "./auth.server";
 
 export type UserInfo = {
     givenName: string,
@@ -22,7 +23,7 @@ export type CreateUserErrors = {
 //     SetupOtp,
 // }
 
-export async function createUserFromForm(formData: FormData, setupOverride?: boolean) {
+export async function createUserFromForm(formData: FormData, requestForAuth: Request, setupOverride?: boolean) {
     let hasErrors = false;
     const errors = {
         global: [],
@@ -91,12 +92,10 @@ export async function createUserFromForm(formData: FormData, setupOverride?: boo
     }
 
     // ## Check actor permissions ##
-    // Check actor session again here?
-    // We need to check if actor is admin if trying to create a librarian / admin type.
-    const otp = formData.get("otp");
     // let authMode: AuthMode; log this?
-    // eslint-disable-next-line no-constant-condition
-    if (/* librarian / admin session valid || */false) {
+    const otp = formData.get("otp");
+    const actor = await auth.isAuthenticated(requestForAuth);
+    if (actor && actor.isLibrarian && (userInfo.accountType == "normal" || actor.isAdmin)) {
         // authMode = AuthMode.Session;
     } else if (setupOverride && typeof otp === "string" && checkOtp(otp)) {
         // authMode = AuthMode.SetupOtp;
