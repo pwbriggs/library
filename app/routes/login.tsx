@@ -6,6 +6,7 @@ import { Form, json, MetaFunction, useLoaderData } from "@remix-run/react";
 import { auth } from "~/scripts/auth.server";
 import { commitSession, getSession } from "~/scripts/session.server";
 import logo from "~/assets/img/logo.svg";
+import { getNextUrl } from "~/scripts/urls.server";
 
 export const meta: MetaFunction = () => {
     return [
@@ -65,15 +66,15 @@ export default function Screen() {
 export async function action({ request }: ActionFunctionArgs) {
     // TODO log this action
     return await auth.authenticate("usernamePassword", request, {
-        successRedirect: "/",
-        failureRedirect: "/login",
+        successRedirect: getNextUrl(request),
+        failureRedirect: request.url,
     });
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-    // If the user is already authenticated redirect to /dashboard directly
+    // If the user is already authenticated redirect to next url directly
     await auth.isAuthenticated(request, {
-        successRedirect: "/",
+        successRedirect: getNextUrl(request),
     });
     let session = await getSession(request.headers.get("cookie"));
     let error = session.get(auth.sessionErrorKey);
