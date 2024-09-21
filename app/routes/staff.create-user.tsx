@@ -55,7 +55,7 @@ export default function CreateUser() {
                                 my="sm"
                             />
                             {accountType != AccountType.Normal &&
-                                <Text fw="bold">Are you sure? Is this account for a staff member?</Text>
+                                <Text fw="bold" c="red">Are you sure? Is this account for a staff member?</Text>
                             }
                             <input
                                 type="hidden"
@@ -64,7 +64,7 @@ export default function CreateUser() {
                             />
                         </Fieldset>
                     </details>
-                    <Button mt="sm" type="submit" rightSection={<IconChevronRight />}>
+                    <Button mt="sm" type="submit" rightSection={<IconChevronRight />} color={accountType != AccountType.Normal ? "red" : undefined}>
                         Create{accountType != AccountType.Normal && " staff"} account
                     </Button>
                     {actionData?.errors && actionData.errors.global.length > 0 && <>
