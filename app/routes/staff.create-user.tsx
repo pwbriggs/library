@@ -1,4 +1,4 @@
-import { Center, TextInput, Group, Text, Button, Box, Fieldset, Checkbox, SegmentedControl, PasswordInput, List, ThemeIcon } from "@mantine/core";
+import { Center, TextInput, Group, Text, Button, Box, Fieldset, Checkbox, SegmentedControl, PasswordInput, List } from "@mantine/core";
 import { IconArrowBackUp, IconChevronRight } from "@tabler/icons-react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, json, MetaFunction, redirect, useActionData, useLoaderData } from "@remix-run/react";

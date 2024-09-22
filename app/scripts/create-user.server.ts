@@ -103,7 +103,7 @@ export async function createUserFromForm(formData: FormData, requestForAuth: Req
         return { hasErrors: true, errors }
     }
 
-    // ## Check availibility ##
+    // ## Check availability ##
     if (await prisma.user.findFirst({
         where: { loginName: userInfo.username }
     }) != null) {
@@ -115,7 +115,7 @@ export async function createUserFromForm(formData: FormData, requestForAuth: Req
     }
 
     // ## Woo hoo! Create the user now! ##
-    // TODO definitiely log this action.
+    // TODO definitely log this action.
     // TODO implement tokens or something; the user shouldn't be setting a password now.
     const newCredential = createUsernamePasswordCredential("Initial password", userInfo.password)
 

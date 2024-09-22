@@ -76,8 +76,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
     await auth.isAuthenticated(request, {
         successRedirect: getNextUrl(request),
     });
-    let session = await getSession(request.headers.get("cookie"));
-    let error = session.get(auth.sessionErrorKey);
+    const session = await getSession(request.headers.get("cookie"));
+    const error = session.get(auth.sessionErrorKey);
     return json({ error }, {
         headers: {
             'Set-Cookie': await commitSession(session) // You must commit the session whenever you read a flash
