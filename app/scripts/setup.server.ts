@@ -11,20 +11,20 @@ declare global {
 }
 
 export async function bootstrapAccount() {
-    if (!await prisma.user.findFirst({
-        where: { isAdmin: true }
-    })) {
-        console.warn("> No admins found. Initializing setup flow.");
-        showAppSetup = true;
-        const otp = genOtp();
-        appSetupCodeHash = bcrypt.hashSync(otp)
-        console.warn("> Please open the website, and enter the following code when prompted:")
-        console.warn("> " + otp);
-    } else {
-        console.log("Admin account found.");
-        showAppSetup = false;
-    }
-
+    // if (!await prisma.user.findFirst({
+    //     where: { isAdmin: true }
+    // })) {
+    //     console.warn("> No admins found. Initializing setup flow.");
+    //     showAppSetup = true;
+    //     const otp = genOtp();
+    //     appSetupCodeHash = bcrypt.hashSync(otp)
+    //     console.warn("> Please open the website, and enter the following code when prompted:")
+    //     console.warn("> " + otp);
+    // } else {
+    //     console.log("Admin account found.");
+    //     showAppSetup = false;
+    // }
+    showAppSetup = false;
 }
 
 export function checkOtp(given: string) {
