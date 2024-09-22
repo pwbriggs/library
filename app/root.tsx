@@ -17,7 +17,7 @@ import { AppSetup, AppSetupState } from "~/scripts/setup";
 import { ActionFunctionArgs, json, redirect } from "@remix-run/node";
 import { CreateUserErrors, createUserFromForm } from "~/scripts/create-user.server";
 
-await serverOnly$(bootstrapAccount());
+serverOnly$(bootstrapAccount());
 
 export default function App() {
     const loaderData = useLoaderData<typeof loader>();
