@@ -9,10 +9,6 @@ import {
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
 
-import { bootstrapAccount, checkOtp, showAppSetup } from "~/scripts/setup.server";
-import { ActionFunctionArgs, json, redirect } from "@remix-run/node";
-import { CreateUserErrors, createUserFromForm } from "~/scripts/create-user.server";
-
 export default function App() {
     return (
         <html lang="en">
