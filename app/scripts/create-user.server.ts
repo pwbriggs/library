@@ -1,6 +1,5 @@
 import { prisma } from "~/scripts/prisma.server";
 import { createUsernamePasswordCredential } from "~/scripts/password.server";
-import { checkOtp } from "./setup.server";
 import { auth } from "./auth.server";
 
 export type UserInfo = {
@@ -93,11 +92,10 @@ export async function createUserFromForm(formData: FormData, requestForAuth: Req
 
     // ## Check actor permissions ##
     // let authMode: AuthMode; log this?
-    const otp = formData.get("otp");
     const actor = await auth.isAuthenticated(requestForAuth);
     if (actor && actor.isLibrarian && (userInfo.accountType == "normal" || actor.isAdmin)) {
         // authMode = AuthMode.Session;
-    } else if (setupOverride && typeof otp === "string" && checkOtp(otp)) {
+    } else if (setupOverride) {
         // authMode = AuthMode.SetupOtp;
     } else {
         return { hasErrors: true, errors }
