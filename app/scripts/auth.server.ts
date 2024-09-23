@@ -1,10 +1,13 @@
 import { Authenticator } from "remix-auth";
-import { sessionStorage } from "~/scripts/session.server";
 import { prisma } from "~/scripts/prisma.server";
+import { sessionStorage } from "~/scripts/session.server";
 
+import type { CredentialType, Prisma, User } from "@prisma/client";
 import { FormStrategy } from "remix-auth-form";
-import { loginUsernamePassword, UsernamePasswordCred } from "~/scripts/password.server";
-import { CredentialType, User, Prisma } from "@prisma/client";
+import {
+    type UsernamePasswordCred,
+    loginUsernamePassword,
+} from "~/scripts/password.server";
 
 export const auth = new Authenticator<User>(sessionStorage);
 
@@ -12,27 +15,33 @@ auth.use(
     new FormStrategy(async ({ form }) => {
         const username = String(form.get("username"));
         const password = String(form.get("password"));
-        console.log("Username & pass login")
-        const user = await getUserWithCredentialsOrThrow<UsernamePasswordCred>(username, "USERNAME_PASSWORD");
+        console.log("Username & pass login");
+        const user = await getUserWithCredentialsOrThrow<UsernamePasswordCred>(
+            username,
+            "USERNAME_PASSWORD",
+        );
         await loginUsernamePassword(user.credentials, password); // Throws on error
         return user;
     }),
     "usernamePassword",
 );
 
-async function getUserWithCredentialsOrThrow<CredType>(username: string, credentialType: CredentialType) {
-    let user;
+async function getUserWithCredentialsOrThrow<CredType>(
+    username: string,
+    credentialType: CredentialType,
+): Promise<User & { credentials: CredType[] }> {
+    let user: User;
     try {
         user = await prisma.user.findUniqueOrThrow({
             where: { loginName: username },
             include: {
                 credentials: {
-                    where: { type: credentialType }
-                }
-            }
-        })
+                    where: { type: credentialType },
+                },
+            },
+        });
     } catch {
-        throw Error("badUsername")
+        throw Error("badUsername");
     }
     return user as User & { credentials: CredType[] };
 }
@@ -46,11 +55,15 @@ export function getNewCredential<CredJson extends Prisma.JsonObject>(
     return { title, type, json };
 }
 
-export async function addCredential(user: User, cred: Prisma.CredentialCreateInput, actor?: User) {
+export async function addCredential(
+    user: User,
+    cred: Prisma.CredentialCreateInput,
+    actor?: User,
+) {
     await prisma.user.update({
         where: { id: user.id },
         data: {
-            credentials: { create: cred }
-        }
-    })
+            credentials: { create: cred },
+        },
+    });
 }

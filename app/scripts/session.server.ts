@@ -5,8 +5,8 @@ import { createCookieSessionStorage } from "@remix-run/node";
 export const sessionStorage = createCookieSessionStorage({
     cookie: {
         name: "library_session", // use any name you want here
-        sameSite: "strict", 
-        path: "/", 
+        sameSite: "strict",
+        path: "/",
         //***httpOnly: true,
         secrets: ["s3cr3t"], // replace this with an actual secret
         secure: process.env.NODE_ENV === "production", // enable this in prod only

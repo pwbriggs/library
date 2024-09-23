@@ -1,15 +1,36 @@
-import { Center, TextInput, Group, Text, Button, Box, Fieldset, Checkbox, SegmentedControl, PasswordInput, List } from "@mantine/core";
-import { IconArrowBackUp, IconChevronRight } from "@tabler/icons-react";
+import {
+    Box,
+    Button,
+    Center,
+    Checkbox,
+    Fieldset,
+    Group,
+    List,
+    PasswordInput,
+    SegmentedControl,
+    Text,
+    TextInput,
+} from "@mantine/core";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { Form, json, MetaFunction, redirect, useActionData, useLoaderData } from "@remix-run/react";
+import {
+    Form,
+    type MetaFunction,
+    json,
+    redirect,
+    useActionData,
+    useLoaderData,
+} from "@remix-run/react";
+import { IconArrowBackUp, IconChevronRight } from "@tabler/icons-react";
 import { useState } from "react";
-import { CreateUserErrors, createUserFromForm, UserInfo } from "~/scripts/create-user.server";
 import { auth } from "~/scripts/auth.server";
+import {
+    type CreateUserErrors,
+    type UserInfo,
+    createUserFromForm,
+} from "~/scripts/create-user.server";
 
 export const meta: MetaFunction = () => {
-    return [
-        { title: "Create user" }
-    ];
+    return [{ title: "Create user" }];
 };
 
 enum AccountType {
@@ -20,13 +41,15 @@ enum AccountType {
 
 export default function CreateUser() {
     const actionData = useActionData<typeof action>();
-    const { actor } = useLoaderData<typeof loader>()
+    const { actor } = useLoaderData<typeof loader>();
     const [accountType, setAccountType] = useState(AccountType.Normal);
     const [scriptPrompts, setScriptPrompts] = useState(false);
     return (
         <Center>
             <Box miw="min(70%, 40rem)">
-                <Text component="h1" fw="bold" size="lg" mb="md">Create user account</Text>
+                <Text component="h1" fw="bold" size="lg" mb="md">
+                    Create user account
+                </Text>
                 <Checkbox
                     label="Show script prompts"
                     checked={scriptPrompts}
@@ -34,13 +57,18 @@ export default function CreateUser() {
                     mb="sm"
                 />
                 <Form method="post">
-                    <CollectUserInfo errors={actionData?.errors} scriptPrompts={scriptPrompts} />
+                    <CollectUserInfo
+                        errors={actionData?.errors}
+                        scriptPrompts={scriptPrompts}
+                    />
                     <details>
                         <summary>Change account type</summary>
                         <Fieldset legend="Account type">
-                            {!actor?.isAdmin &&
-                                <Text fs="italic" c="red">This option is only available to admins.</Text>
-                            }
+                            {!actor?.isAdmin && (
+                                <Text fs="italic" c="red">
+                                    This option is only available to admins.
+                                </Text>
+                            )}
                             <SegmentedControl
                                 value={accountType}
                                 onChange={(accountType) => {
@@ -54,9 +82,12 @@ export default function CreateUser() {
                                 disabled={!actor?.isAdmin}
                                 my="sm"
                             />
-                            {accountType != AccountType.Normal &&
-                                <Text fw="bold" c="red">Are you sure? Is this account for a staff member?</Text>
-                            }
+                            {accountType !== AccountType.Normal && (
+                                <Text fw="bold" c="red">
+                                    Are you sure? Is this account for a staff
+                                    member?
+                                </Text>
+                            )}
                             <input
                                 type="hidden"
                                 name="accountType"
@@ -64,27 +95,55 @@ export default function CreateUser() {
                             />
                         </Fieldset>
                     </details>
-                    <Button mt="sm" type="submit" rightSection={<IconChevronRight />} color={accountType != AccountType.Normal ? "red" : undefined}>
-                        Create{accountType != AccountType.Normal && " staff"} account
+                    <Button
+                        mt="sm"
+                        type="submit"
+                        rightSection={<IconChevronRight />}
+                        color={
+                            accountType !== AccountType.Normal
+                                ? "red"
+                                : undefined
+                        }
+                    >
+                        Create{accountType !== AccountType.Normal && " staff"}{" "}
+                        account
                     </Button>
-                    {actionData?.errors && actionData.errors.global.length > 0 && <>
-                        <Text fw="bold">
-                            Unexpected error{actionData.errors.global.length != 1 && "s"} while creating user
-                        </Text>
-                        <details>
-                            <List size="sm">
-                                {actionData.errors.global.map(message => <List.Item key={message}>{message}</List.Item>)}
-                            </List>
-                        </details>
-                        <Text fs="italic">Please reload the page and try again, or contact your IT administrator.</Text>
-                    </>}
+                    {actionData?.errors &&
+                        actionData.errors.global.length > 0 && (
+                            <>
+                                <Text fw="bold">
+                                    Unexpected error
+                                    {actionData.errors.global.length !== 1 &&
+                                        "s"}{" "}
+                                    while creating user
+                                </Text>
+                                <details>
+                                    <List size="sm">
+                                        {actionData.errors.global.map(
+                                            (message) => (
+                                                <List.Item key={message}>
+                                                    {message}
+                                                </List.Item>
+                                            ),
+                                        )}
+                                    </List>
+                                </details>
+                                <Text fs="italic">
+                                    Please reload the page and try again, or
+                                    contact your IT administrator.
+                                </Text>
+                            </>
+                        )}
                 </Form>
             </Box>
         </Center>
     );
 }
 
-export function CollectUserInfo({ scriptPrompts, errors }: { scriptPrompts?: boolean, errors?: CreateUserErrors }) {
+export function CollectUserInfo({
+    scriptPrompts,
+    errors,
+}: { scriptPrompts?: boolean; errors?: CreateUserErrors }) {
     const [userInfo, setUserInfo] = useState<UserInfo>({
         givenName: "",
         familyName: "",
@@ -94,30 +153,43 @@ export function CollectUserInfo({ scriptPrompts, errors }: { scriptPrompts?: boo
         password: "",
         accountType: "normal",
     }); // Note that state will be out of date for fields with autoFields on
-    const [autoFields, setAutoFields] = useState({ fullName: true, preferredName: true, username: true });
+    const [autoFields, setAutoFields] = useState({
+        fullName: true,
+        preferredName: true,
+        username: true,
+    });
 
     const script = {
-        givenName: "(\"What's your full name?\" & context\u2014incl. middle names)",
-        familyName: "(\"So your [last]? name is...?\")",
+        givenName:
+            '("What\'s your full name?" & context\u2014incl. middle names)',
+        familyName: '("So your [last]? name is...?")',
         fullName: "(Edit from default based on earlier response)",
-        preferredName: "(Confirm default with \"And we should call you...?\")",
-        username: "(Prefer autofilled for consistency)"
-    }
+        preferredName: '(Confirm default with "And we should call you...?")',
+        username: "(Prefer autofilled for consistency)",
+    };
 
-    function suggestUsername(user: UserInfo): string {  // Simple algorithm for suggesting short usernames
-        let suggestion = user.givenName && user.givenName.trim()[0] + user.familyName.replaceAll(/[^\w_]+/g, "");
+    function suggestUsername(user: UserInfo): string {
+        // Simple algorithm for suggesting short usernames
+        let suggestion =
+            user.givenName &&
+            user.givenName.trim()[0] +
+                user.familyName.replaceAll(/[^\w_]+/g, "");
         if (suggestion.length < 4) {
-            const concat = user.givenName.replaceAll(/[^\w_]+/g, "") + user.familyName.replaceAll(/[^\w_]+/g, "");
+            const concat =
+                user.givenName.replaceAll(/[^\w_]+/g, "") +
+                user.familyName.replaceAll(/[^\w_]+/g, "");
             suggestion = concat;
         }
         if (suggestion.length > 9) {
-            const initialized = (
-                user.givenName.replaceAll(/[^\w_]+/g, " ")
-                    .split(" ")[0]
-                + user.familyName.replaceAll(/[^\w_]+/g, " ")
+            const initialized =
+                user.givenName.replaceAll(/[^\w_]+/g, " ").split(" ")[0] +
+                user.familyName
+                    .replaceAll(/[^\w_]+/g, " ")
                     .split(" ")
-                    .reduce((accumulator, segment) => accumulator + segment[0], "")
-            );
+                    .reduce(
+                        (accumulator, segment) => accumulator + segment[0],
+                        "",
+                    );
             if (initialized.length < suggestion.length) {
                 suggestion = initialized;
             }
@@ -135,7 +207,12 @@ export function CollectUserInfo({ scriptPrompts, errors }: { scriptPrompts?: boo
                         name="givenName"
                         autoComplete="off"
                         required
-                        onChange={e => setUserInfo({ ...userInfo, givenName: e.currentTarget.value })}
+                        onChange={(e) =>
+                            setUserInfo({
+                                ...userInfo,
+                                givenName: e.currentTarget.value,
+                            })
+                        }
                         value={userInfo.givenName}
                         error={errors?.fields.givenName}
                     />
@@ -145,7 +222,12 @@ export function CollectUserInfo({ scriptPrompts, errors }: { scriptPrompts?: boo
                         name="familyName"
                         autoComplete="off"
                         required
-                        onChange={e => setUserInfo({ ...userInfo, familyName: e.currentTarget.value })}
+                        onChange={(e) =>
+                            setUserInfo({
+                                ...userInfo,
+                                familyName: e.currentTarget.value,
+                            })
+                        }
                         value={userInfo.familyName}
                         error={errors?.fields.familyName}
                     />
@@ -158,23 +240,32 @@ export function CollectUserInfo({ scriptPrompts, errors }: { scriptPrompts?: boo
                         autoComplete="off"
                         required
                         onChange={(e) => {
-                            setUserInfo({ ...userInfo, fullName: e.currentTarget.value });
+                            setUserInfo({
+                                ...userInfo,
+                                fullName: e.currentTarget.value,
+                            });
                             setAutoFields({ ...autoFields, fullName: false });
                         }}
-                        value={autoFields.fullName ? `${userInfo.givenName} ${userInfo.familyName}`.trim() : userInfo.fullName}
+                        value={
+                            autoFields.fullName
+                                ? `${userInfo.givenName} ${userInfo.familyName}`.trim()
+                                : userInfo.fullName
+                        }
                         error={errors?.fields.fullName}
                     />
-                    {!autoFields.fullName &&
+                    {!autoFields.fullName && (
                         <Button
                             variant="subtle"
                             color="grey"
                             px="xs"
                             leftSection={<IconArrowBackUp />}
-                            onClick={() => setAutoFields({ ...autoFields, fullName: true })}
+                            onClick={() =>
+                                setAutoFields({ ...autoFields, fullName: true })
+                            }
                         >
                             Default
                         </Button>
-                    }
+                    )}
                 </Group>
                 <Group align="end">
                     <TextInput
@@ -184,23 +275,38 @@ export function CollectUserInfo({ scriptPrompts, errors }: { scriptPrompts?: boo
                         autoComplete="off"
                         required
                         onChange={(e) => {
-                            setUserInfo({ ...userInfo, preferredName: e.currentTarget.value });
-                            setAutoFields({ ...autoFields, preferredName: false });
+                            setUserInfo({
+                                ...userInfo,
+                                preferredName: e.currentTarget.value,
+                            });
+                            setAutoFields({
+                                ...autoFields,
+                                preferredName: false,
+                            });
                         }}
-                        value={autoFields.preferredName ? userInfo.givenName.split(" ")[0] : userInfo.preferredName}
+                        value={
+                            autoFields.preferredName
+                                ? userInfo.givenName.split(" ")[0]
+                                : userInfo.preferredName
+                        }
                         error={errors?.fields.preferredName}
                     />
-                    {!autoFields.preferredName &&
+                    {!autoFields.preferredName && (
                         <Button
                             variant="subtle"
                             color="grey"
                             px="xs"
                             leftSection={<IconArrowBackUp />}
-                            onClick={() => setAutoFields({ ...autoFields, preferredName: true })}
+                            onClick={() =>
+                                setAutoFields({
+                                    ...autoFields,
+                                    preferredName: true,
+                                })
+                            }
                         >
                             Default
                         </Button>
-                    }
+                    )}
                 </Group>
             </Fieldset>
             <Fieldset legend="Login information">
@@ -212,30 +318,44 @@ export function CollectUserInfo({ scriptPrompts, errors }: { scriptPrompts?: boo
                         autoComplete="off"
                         required
                         onChange={(e) => {
-                            setUserInfo({ ...userInfo, username: e.currentTarget.value });
+                            setUserInfo({
+                                ...userInfo,
+                                username: e.currentTarget.value,
+                            });
                             setAutoFields({ ...autoFields, username: false });
                         }}
-                        value={autoFields.username ? suggestUsername(userInfo) : userInfo.username}
+                        value={
+                            autoFields.username
+                                ? suggestUsername(userInfo)
+                                : userInfo.username
+                        }
                         error={errors?.fields.username}
                     />
-                    {!autoFields.username &&
+                    {!autoFields.username && (
                         <Button
                             variant="subtle"
                             color="grey"
                             px="xs"
                             leftSection={<IconArrowBackUp />}
-                            onClick={() => setAutoFields({ ...autoFields, username: true })}
+                            onClick={() =>
+                                setAutoFields({ ...autoFields, username: true })
+                            }
                         >
                             Default
                         </Button>
-                    }
+                    )}
                 </Group>
                 <PasswordInput
                     label="Password"
                     name="password"
                     autoComplete="off"
                     required
-                    onChange={e => setUserInfo({ ...userInfo, password: e.currentTarget.value })}
+                    onChange={(e) =>
+                        setUserInfo({
+                            ...userInfo,
+                            password: e.currentTarget.value,
+                        })
+                    }
                     value={userInfo.password}
                     error={errors?.fields.password}
                 />
@@ -245,7 +365,10 @@ export function CollectUserInfo({ scriptPrompts, errors }: { scriptPrompts?: boo
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-    const { hasErrors, errors, username } = await createUserFromForm(await request.formData(), request);
+    const { hasErrors, errors, username } = await createUserFromForm(
+        await request.formData(),
+        request,
+    );
     if (hasErrors) {
         return json({ errors });
     }

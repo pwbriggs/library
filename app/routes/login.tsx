@@ -1,42 +1,58 @@
-import { Center, Paper, TextInput, Image, Group, Text, Button, PasswordInput, CheckIcon, CloseIcon } from "@mantine/core";
+import {
+    Button,
+    Center,
+    CheckIcon,
+    CloseIcon,
+    Group,
+    Image,
+    Paper,
+    PasswordInput,
+    Text,
+    TextInput,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconChevronRight } from "@tabler/icons-react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { Form, json, MetaFunction, useLoaderData } from "@remix-run/react";
+import { Form, type MetaFunction, json, useLoaderData } from "@remix-run/react";
+import { IconChevronRight } from "@tabler/icons-react";
+import logo from "~/assets/img/logo.svg";
 import { auth } from "~/scripts/auth.server";
 import { commitSession, getSession } from "~/scripts/session.server";
-import logo from "~/assets/img/logo.svg";
 import { getNextUrl } from "~/scripts/urls.server";
 
 export const meta: MetaFunction = () => {
-    return [
-        { title: "Login" }
-    ];
+    return [{ title: "Login" }];
 };
 
 // First we create our UI with the form doing a POST and the inputs with the
 // names we are going to use in the strategy
 export default function Screen() {
     const data = useLoaderData<typeof loader>();
-    let errors = { username: "", password: "" };
+    const errors = { username: "", password: "" };
     switch (data.error?.message) {
         case "badUsername":
-            errors.username = "User not found"
+            errors.username = "User not found";
             break;
         case "noPasswords":
-            errors.username = "Password login is not set up for this user"
+            errors.username = "Password login is not set up for this user";
             break;
         case "badPassword":
-            errors.password = "Incorrect password"
+            errors.password = "Incorrect password";
             break;
         case undefined:
             break;
         default:
-            errors.password = "Unknown login error, please contact a librarian"
+            errors.password = "Unknown login error, please contact a librarian";
     }
     return (
         <Center>
-            <Paper m="md" miw="min(40%, 25rem)" p="lg" shadow="lg" withBorder radius="md">
+            <Paper
+                m="md"
+                miw="min(40%, 25rem)"
+                p="lg"
+                shadow="lg"
+                withBorder
+                radius="md"
+            >
                 <Group mb="sm">
                     <Image w="1.5em" h="1.5em" src={logo} alt="app logo" />
                     <Text>Log in</Text>
@@ -56,7 +72,13 @@ export default function Screen() {
                         required
                         error={errors.password}
                     />
-                    <Button mt="sm" type="submit" rightSection={<IconChevronRight />}>Log in</Button>
+                    <Button
+                        mt="sm"
+                        type="submit"
+                        rightSection={<IconChevronRight />}
+                    >
+                        Log in
+                    </Button>
                 </Form>
             </Paper>
         </Center>
@@ -78,9 +100,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
     });
     const session = await getSession(request.headers.get("cookie"));
     const error = session.get(auth.sessionErrorKey);
-    return json({ error }, {
-        headers: {
-            'Set-Cookie': await commitSession(session) // You must commit the session whenever you read a flash
-        }
-    });
+    return json(
+        { error },
+        {
+            headers: {
+                "Set-Cookie": await commitSession(session), // You must commit the session whenever you read a flash
+            },
+        },
+    );
 }

@@ -1,28 +1,32 @@
-import { prisma } from "~/scripts/prisma.server";
-import { createUsernamePasswordCredential } from "~/scripts/password.server";
 import { auth } from "~/scripts/auth.server";
+import { createUsernamePasswordCredential } from "~/scripts/password.server";
+import { prisma } from "~/scripts/prisma.server";
 
 export type UserInfo = {
-    givenName: string,
-    familyName: string,
-    fullName: string,
-    preferredName: string,
-    username: string,
-    password: string,
-    accountType: "normal" | "librarian" | "admin",
-}
+    givenName: string;
+    familyName: string;
+    fullName: string;
+    preferredName: string;
+    username: string;
+    password: string;
+    accountType: "normal" | "librarian" | "admin";
+};
 
 export type CreateUserErrors = {
-    global: string[],
-    fields: { [fieldName in keyof UserInfo]: string },
-}
+    global: string[];
+    fields: { [fieldName in keyof UserInfo]: string };
+};
 
 // enum AuthMode {
 //     Session,
 //     SetupOtp,
 // }
 
-export async function createUserFromForm(formData: FormData, requestForAuth: Request, setupOverride?: boolean) {
+export async function createUserFromForm(
+    formData: FormData,
+    requestForAuth: Request,
+    setupOverride?: boolean,
+) {
     let hasErrors = false;
     const errors = {
         global: [],
@@ -37,7 +41,7 @@ export async function createUserFromForm(formData: FormData, requestForAuth: Req
         },
     } as CreateUserErrors;
     function addError(location: keyof UserInfo | "global", message: string) {
-        if (location == "global") {
+        if (location === "global") {
             errors.global.push(message);
         } else {
             errors.fields[location] = errors.fields[location] || message;
@@ -46,39 +50,51 @@ export async function createUserFromForm(formData: FormData, requestForAuth: Req
     }
 
     // ## Check data presence ##
-    const formFields = Object.keys(errors.fields).reduce((accumulator, untypedFieldName) => {
-        // Looks like the DT typings can't do this this automatically yet, or I don't fully understand Object.keys().
+    const formFields = {} as Partial<UserInfo>;
+    for (const untypedFieldName in errors.fields) {
         const fieldName = untypedFieldName as keyof UserInfo;
-
-        if (setupOverride && fieldName == "accountType") {
-            return { ...accumulator, accountType: "admin" } as Partial<UserInfo>;
-        }
-
         const field = formData.get(fieldName);
-        if (typeof field != "string") {
-            addError("global", `Server: got unexpected type ${typeof field} for ${fieldName}.`);
-            return accumulator;
-        }
-        if (field.length == 0) {
-            addError(fieldName, "This field is required.")
-            return accumulator;
+
+        if (fieldName === "accountType") {
+            // Special handling for more restricted value, & special logic for setupOverride.
+            if (setupOverride) {
+                formFields.accountType = "admin";
+            }
+
+            if (
+                field === "normal" ||
+                field === "librarian" ||
+                field === "admin"
+            ) {
+                formFields.accountType = field;
+            } else {
+                addError(
+                    "global",
+                    `Server: got unexpected value ${formFields.accountType} for account type.`,
+                );
+            }
+            continue;
         }
 
-        return { ...accumulator, [fieldName]: field };
-    }, {} as Partial<UserInfo>);
+        if (typeof field !== "string") {
+            addError(
+                "global",
+                `Server: got unexpected type ${typeof field} for ${fieldName}.`,
+            );
+            continue;
+        }
+        if (field.length === 0) {
+            addError(fieldName, "This field is required.");
+            continue;
+        }
+
+        formFields[fieldName] = field;
+    }
 
     if (hasErrors) {
-        return { hasErrors, errors }
+        return { hasErrors, errors };
     }
 
-    // ## Check basic requirements ##
-    if (!(
-        formFields.accountType == "normal" ||
-        formFields.accountType == "librarian" ||
-        formFields.accountType == "admin"
-    )) {
-        addError("global", `Server: got unexpected value ${formFields.accountType} for account type.`);
-    }
     // At this point, we've assembled a complete userInfo object! Update re-assign with stricter types.
     const userInfo = formFields as UserInfo;
 
@@ -93,18 +109,23 @@ export async function createUserFromForm(formData: FormData, requestForAuth: Req
     // ## Check actor permissions ##
     // let authMode: AuthMode; log this?
     const actor = await auth.isAuthenticated(requestForAuth);
-    if (actor && actor.isLibrarian && (userInfo.accountType == "normal" || actor.isAdmin)) {
+    if (
+        actor?.isLibrarian &&
+        (userInfo.accountType === "normal" || actor.isAdmin)
+    ) {
         // authMode = AuthMode.Session;
     } else if (setupOverride) {
         // authMode = AuthMode.SetupOtp;
     } else {
-        return { hasErrors: true, errors }
+        return { hasErrors: true, errors };
     }
 
     // ## Check availability ##
-    if (await prisma.user.findFirst({
-        where: { loginName: userInfo.username }
-    }) != null) {
+    if (
+        (await prisma.user.findFirst({
+            where: { loginName: userInfo.username },
+        })) != null
+    ) {
         addError("username", "Username already taken.");
     }
 
@@ -115,7 +136,10 @@ export async function createUserFromForm(formData: FormData, requestForAuth: Req
     // ## Woo hoo! Create the user now! ##
     // TODO definitely log this action.
     // TODO implement tokens or something; the user shouldn't be setting a password now.
-    const newCredential = createUsernamePasswordCredential("Initial password", userInfo.password)
+    const newCredential = createUsernamePasswordCredential(
+        "Initial password",
+        userInfo.password,
+    );
 
     await prisma.user.create({
         data: {
@@ -124,14 +148,14 @@ export async function createUserFromForm(formData: FormData, requestForAuth: Req
             fullName: userInfo.fullName,
             preferredName: userInfo.preferredName,
             loginName: userInfo.username,
-            isAdmin: userInfo.accountType == "admin",
-            isLibrarian: userInfo.accountType == "admin" || userInfo.accountType == "librarian",
+            isAdmin: userInfo.accountType === "admin",
+            isLibrarian:
+                userInfo.accountType === "admin" ||
+                userInfo.accountType === "librarian",
             credentials: {
-                create: [
-                    newCredential
-                ]
-            }
-        }
+                create: [newCredential],
+            },
+        },
     });
 
     return { hasErrors: false, username: userInfo.username };

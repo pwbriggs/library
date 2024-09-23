@@ -1,12 +1,14 @@
 import { Button, Center, Group, Stack, Text } from "@mantine/core";
-import { json, type LoaderFunctionArgs, type MetaFunction } from "@remix-run/node";
+import {
+    type LoaderFunctionArgs,
+    type MetaFunction,
+    json,
+} from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { auth } from "~/scripts/auth.server";
 
 export const meta: MetaFunction = () => {
-    return [
-        { title: "Home" }
-    ];
+    return [{ title: "Home" }];
 };
 
 export default function Index() {
@@ -14,7 +16,7 @@ export default function Index() {
     return (
         <Center>
             <Stack>
-                {data.user ?
+                {data.user ? (
                     <>
                         <Text size="xl" fw="bold">
                             Hello,{" "}
@@ -22,21 +24,32 @@ export default function Index() {
                                 inherit
                                 span
                                 variant="gradient"
-                                gradient={{ from: "cyan", to: "blue.9", deg: 45 }}
+                                gradient={{
+                                    from: "cyan",
+                                    to: "blue.9",
+                                    deg: 45,
+                                }}
                             >
                                 {data.user.preferredName}
-                            </Text>!
+                            </Text>
+                            !
                         </Text>
-                        <Button component="a" href="/logout">Log out</Button>
+                        <Button component="a" href="/logout">
+                            Log out
+                        </Button>
                     </>
-                    :
+                ) : (
                     <>
-                        <Text size="xl" fw="bold">Welcome to the library!</Text>
+                        <Text size="xl" fw="bold">
+                            Welcome to the library!
+                        </Text>
                         <Group>
-                            <Button component="a" href="/login">Log in</Button>
+                            <Button component="a" href="/login">
+                                Log in
+                            </Button>
                         </Group>
                     </>
-                }
+                )}
             </Stack>
         </Center>
     );

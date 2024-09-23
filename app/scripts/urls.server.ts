@@ -1,8 +1,9 @@
-
-
 export function getNextUrl(request: Request): string {
     try {
-        const url = new URL(request.url, "https://example.com").searchParams.get("next");
+        const url = new URL(
+            request.url,
+            "https://example.com",
+        ).searchParams.get("next");
         if (typeof url !== "string") {
             return "/";
         }
