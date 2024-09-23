@@ -1,11 +1,6 @@
 name: CI tests
 'on':
   push:
-    branches:
-      - beta
-  pull_request:
-    branches:
-      - beta
 jobs:
   playwright:
     timeout-minutes: 60
