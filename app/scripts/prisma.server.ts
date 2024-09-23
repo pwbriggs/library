@@ -3,7 +3,8 @@ import { PrismaClient } from "@prisma/client";
 let prisma: PrismaClient;
 
 declare global {
-    var prisma: PrismaClient; // eslint-disable-line no-var
+    // biome-ignore lint/suspicious/noRedeclare: needed for wacky globals & dev stuff.
+    var prisma: PrismaClient;
     // For reasons I don't entirely understand (TypeScript...), I think we have to use `var` here.
 }
 
