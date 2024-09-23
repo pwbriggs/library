@@ -1,6 +1,6 @@
 import { Credential } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { getNewCredential } from "./auth.server";
+import { getNewCredential } from "~/scripts/auth.server";
 
 export type UsernamePasswordCredJson = {
     hash: string;

@@ -1,6 +1,6 @@
 import { prisma } from "~/scripts/prisma.server";
 import { createUsernamePasswordCredential } from "~/scripts/password.server";
-import { auth } from "./auth.server";
+import { auth } from "~/scripts/auth.server";
 
 export type UserInfo = {
     givenName: string,

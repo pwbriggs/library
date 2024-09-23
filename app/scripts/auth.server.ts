@@ -1,6 +1,6 @@
 import { Authenticator } from "remix-auth";
 import { sessionStorage } from "~/scripts/session.server";
-import { prisma } from "./prisma.server";
+import { prisma } from "~/scripts/prisma.server";
 
 import { FormStrategy } from "remix-auth-form";
 import { loginUsernamePassword, UsernamePasswordCred } from "~/scripts/password.server";

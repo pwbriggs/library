@@ -1,6 +1,6 @@
 import { Button, Center, List, Paper, PinInput, Stack, Text, Title } from "@mantine/core"
 import { Form, json, redirect, useActionData, useLoaderData, useNavigation, useSubmit } from "@remix-run/react";
-import { CollectUserInfo } from "./staff.create-user";
+import { CollectUserInfo } from "~/routes/staff.create-user";
 import { IconChevronRight } from "@tabler/icons-react";
 import { useState } from "react";
 import { CreateUserErrors, createUserFromForm } from "~/scripts/create-user.server";
