@@ -34,7 +34,6 @@ export default function Index() {
                         <Text size="xl" fw="bold">Welcome to the library!</Text>
                         <Group>
                             <Button component="a" href="/login">Log in</Button>
-                            <Button component="a" href="/staff/create-user">Create account</Button>
                         </Group>
                     </>
                 }
