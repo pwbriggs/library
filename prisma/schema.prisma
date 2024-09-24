@@ -3,22 +3,37 @@ generator client {
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+    provider  = "postgresql"
+    url       = env("DATABASE_PRISMA_URL")
 }
 
 model User {
-    id            Int        @id @default(autoincrement())
+    id            Int          @id @default(autoincrement())
     isLibrarian   Boolean
     isAdmin       Boolean
-    joined        DateTime   @default(now())
-    loginName     String     @unique
+    joined        DateTime     @default(now())
+    loginName     String       @unique
     givenName     String
     familyName    String /// For alphabetizing, sort by "{familyName} {givenName}"
     preferredName String /// What to call the user in casual circumstances
     fullName      String /// Not necessarily "{givenName} {familyName}" -- for advanced menus
+    credentials   Credential[]
     checkouts     Checkout[]
     activity      Log[]
+}
+
+model Credential {
+    id      Int            @id @default(autoincrement())
+    type    CredentialType
+    json    Json
+    title   String
+    created DateTime       @default(now())
+    user    User?          @relation(fields: [userId], references: [id])
+    userId  Int?
+}
+
+enum CredentialType {
+    USERNAME_PASSWORD
 }
 
 model Log {

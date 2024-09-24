@@ -16,7 +16,7 @@ jobs:
   #   timeout-minutes: 60
   #   runs-on: ubuntu-latest
   #   env:
-  #       DATABASE_URL: postgresql://app:test_db_password@localhost:5432/appdata?schema=public
+  #       DATABASE_PRISMA_URL: postgresql://app:test_db_password@localhost:5432/appdata?schema=public
   #   services:
   #       # Label used to access the service container
   #       postgres:
