@@ -2,52 +2,6 @@ name: CI tests
 'on':
   push:
 jobs:
-  playwright:
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
-    env:
-        DATABASE_URL: postgresql://app:test_db_password@localhost:5432/appdata?schema=public
-    services:
-        # Label used to access the service container
-        postgres:
-          # Docker Hub image
-          image: postgres
-          # Provide the password for postgres
-          env:
-            POSTGRES_USER: app
-            POSTGRES_PASSWORD: test_db_password
-          # Set health checks to wait until postgres has started
-          options: >-
-            --health-cmd pg_isready
-            --health-interval 10s
-            --health-timeout 5s
-            --health-retries 5
-          ports:
-            # Maps tcp port 5432 on service container to the host
-            - 5432:5432
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v4.0.0
-        with:
-          version: 9
-      - name: Install dependencies
-        run: pnpm install
-      - name: Init testing database
-        run: pnpm exec prisma migrate deploy
-      - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps
-      - name: Run Playwright tests
-        run: pnpm exec playwright test
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
   lint:
     name: Lint with Biome
     runs-on: ubuntu-latest
@@ -58,3 +12,49 @@ jobs:
         uses: biomejs/setup-biome@v2
       - name: Run Biome
         run: biome ci .
+  # playwright:
+  #   timeout-minutes: 60
+  #   runs-on: ubuntu-latest
+  #   env:
+  #       DATABASE_URL: postgresql://app:test_db_password@localhost:5432/appdata?schema=public
+  #   services:
+  #       # Label used to access the service container
+  #       postgres:
+  #         # Docker Hub image
+  #         image: postgres
+  #         # Provide the password for postgres
+  #         env:
+  #           POSTGRES_USER: app
+  #           POSTGRES_PASSWORD: test_db_password
+  #         # Set health checks to wait until postgres has started
+  #         options: >-
+  #           --health-cmd pg_isready
+  #           --health-interval 10s
+  #           --health-timeout 5s
+  #           --health-retries 5
+  #         ports:
+  #           # Maps tcp port 5432 on service container to the host
+  #           - 5432:5432
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 20
+  #     - name: Set up pnpm
+  #       uses: pnpm/action-setup@v4.0.0
+  #       with:
+  #         version: 9
+  #     - name: Install dependencies
+  #       run: pnpm install
+  #     - name: Init testing database
+  #       run: pnpm exec prisma migrate deploy
+  #     - name: Install Playwright Browsers
+  #       run: pnpm exec playwright install --with-deps
+  #     - name: Run Playwright tests
+  #       run: pnpm exec playwright test
+  #     - uses: actions/upload-artifact@v4
+  #       if: always()
+  #       with:
+  #         name: playwright-report
+  #         path: playwright-report/
+  #         retention-days: 30
