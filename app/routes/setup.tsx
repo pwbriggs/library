@@ -25,8 +25,8 @@ import {
     type CreateUserErrors,
     createUserFromForm,
 } from "~/scripts/create-user.server";
-import { prisma } from "~/scripts/prisma.server";
 import { checkOtp, genOtp } from "~/scripts/otp.server";
+import { prisma } from "~/scripts/prisma.server";
 
 enum AppSetupState {
     PendingUnlock = 0,
