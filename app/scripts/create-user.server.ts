@@ -57,20 +57,23 @@ export async function createUserFromForm(
 
         if (fieldName === "accountType") {
             // Special handling for more restricted value, & special logic for setupOverride.
+            const accountTypeField = field?.toString();
+
             if (setupOverride) {
                 formFields.accountType = "admin";
+                continue;
             }
 
             if (
-                field === "normal" ||
-                field === "librarian" ||
-                field === "admin"
+                accountTypeField === "normal" ||
+                accountTypeField === "librarian" ||
+                accountTypeField === "admin"
             ) {
-                formFields.accountType = field;
+                formFields.accountType = accountTypeField;
             } else {
                 addError(
                     "global",
-                    `Server: got unexpected value ${formFields.accountType} for account type.`,
+                    `Server: got unexpected value ${accountTypeField} for account type.`,
                 );
             }
             continue;
