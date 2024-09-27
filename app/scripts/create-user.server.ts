@@ -1,5 +1,5 @@
 import { auth } from "~/scripts/auth.server";
-import { createUsernamePasswordCredential } from "~/scripts/password.server";
+import { createUsernamePasswordCredential } from "~/scripts/auth/password.server";
 import { prisma } from "~/scripts/prisma.server";
 
 export type UserInfo = {

@@ -7,7 +7,7 @@ import { FormStrategy } from "remix-auth-form";
 import {
     type UsernamePasswordCred,
     loginUsernamePassword,
-} from "~/scripts/password.server";
+} from "~/scripts/auth/password.server";
 
 export const auth = new Authenticator<User>(sessionStorage);
 
