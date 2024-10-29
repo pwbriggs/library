@@ -11,7 +11,9 @@ export default function StaffHome() {
                 use:
             </Text>
             <List icon={<IconSparkles />}>
-                <List.Item><Link to="/staff/create-user">Create new user</Link></List.Item>
+                <List.Item>
+                    <Link to="/staff/create-user">Create new user</Link>
+                </List.Item>
             </List>
         </>
     );

@@ -7,7 +7,9 @@ export default function staffHeader() {
     return (
         <>
             <header style={{ backgroundColor: "green", color: "white" }}>
-                <Link to="/staff" style={{color: "white"}}>Staff home</Link>
+                <Link to="/staff" style={{ color: "white" }}>
+                    Staff home
+                </Link>
             </header>
             <Outlet />
         </>
