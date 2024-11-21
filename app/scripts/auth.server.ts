@@ -26,21 +26,21 @@ auth.use(
     "usernamePassword",
 );
 
-async function getUserWithCredentialsOrThrow<CredType>(
+async function getUserWithCredentialsOrThrow<
+    CredType extends Required<Credential>,
+>(
     username: string,
-    credentialType: CredentialType,
+    credentialType: CredType["type"],
 ): Promise<User & { credentials: CredType[] }> {
-    let user: User;
-    try {
-        user = await prisma.user.findUniqueOrThrow({
-            where: { loginName: username },
-            include: {
-                credentials: {
-                    where: { type: credentialType },
-                },
+    const user = await prisma.user.findUnique({
+        where: { loginName: username },
+        include: {
+            credentials: {
+                where: { type: credentialType },
             },
-        });
-    } catch {
+        },
+    });
+    if (!user) {
         throw Error("badUsername");
     }
     return user as User & { credentials: CredType[] };
