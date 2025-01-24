@@ -149,10 +149,10 @@ export async function loader() {
         } else {
             console.warn("> Setup menu unlock code already specified above.");
         }
-        return json({ isSetUp: false });
+        return { isSetUp: false };
     }
     console.log("Admin account found.");
-    return json({ isSetUp: true });
+    return { isSetUp: true };
 }
 
 export async function action({
