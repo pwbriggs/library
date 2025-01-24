@@ -1,9 +1,5 @@
 import { Button, Center, Group, Stack, Text } from "@mantine/core";
-import {
-    type LoaderFunctionArgs,
-    type MetaFunction,
-    json,
-} from "@remix-run/node";
+import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { auth } from "~/scripts/auth.server";
 
@@ -56,5 +52,5 @@ export default function Index() {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-    return json({ user: await auth.isAuthenticated(request) });
+    return { user: await auth.isAuthenticated(request) };
 }

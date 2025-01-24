@@ -15,7 +15,6 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import {
     Form,
     type MetaFunction,
-    json,
     redirect,
     useActionData,
     useLoaderData,
@@ -370,11 +369,11 @@ export async function action({ request }: ActionFunctionArgs) {
         request,
     );
     if (hasErrors) {
-        return json({ errors });
+        return { errors };
     }
     return redirect(`/staff/users/${username}`);
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-    return json({ actor: await auth.isAuthenticated(request) });
+    return { actor: await auth.isAuthenticated(request) };
 }
