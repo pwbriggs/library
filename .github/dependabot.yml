@@ -7,20 +7,20 @@ updates:
       interval: "weekly"
       day: "tuesday"
       time: "11:25" # UTC
-    groups:
-      all:
+    # groups:
+    #   all:
+    #     patterns:
+    #       - "*"
+      remix:
         patterns:
-          - "*"
-    #   remix:
-    #     patterns:
-    #       - "@remix-run/*"
-    #   react:
-    #     patterns:
-    #       - "react"
-    #       - "react-dom"
-    #       - "@types/react"
-    #       - "@types/react-dom"
-    #   prisma:
-    #     patterns:
-    #       - "prisma"
-    #       - "@prisma/client"
+          - "@remix-run/*"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+      prisma:
+        patterns:
+          - "prisma"
+          - "@prisma/client"
