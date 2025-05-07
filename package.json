@@ -22,7 +22,7 @@
         "@remix-run/react": "^2.16.5",
         "@remix-run/serve": "^2.16.5",
         "@tabler/icons-react": "^3.31.0",
-        "bcryptjs": "^2.4.3",
+        "bcryptjs": "^3.0.2",
         "crypto-random-string": "^5.0.0",
         "isbot": "^4.4.0",
         "react": "^18.3.1",
