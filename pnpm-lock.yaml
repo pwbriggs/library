@@ -48,11 +48,11 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       remix-auth:
-        specifier: ^3.6.0
-        version: 3.7.0(@remix-run/react@2.16.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.3))(@remix-run/server-runtime@2.16.8(typescript@5.8.3))
+        specifier: ^4.2.0
+        version: 4.2.0
       remix-auth-form:
-        specifier: ^1.4.0
-        version: 1.5.0(@remix-run/server-runtime@2.16.8(typescript@5.8.3))(remix-auth@3.7.0(@remix-run/react@2.16.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.3))(@remix-run/server-runtime@2.16.8(typescript@5.8.3)))
+        specifier: ^3.0.0
+        version: 3.0.0(remix-auth@4.2.0)
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -2454,17 +2454,15 @@ packages:
   remark-rehype@10.1.0:
     resolution: {integrity: sha512-EFmR5zppdBp0WQeDVZ/b66CWJipB2q2VLNFMabzDSGR66Z2fQii83G5gTBbgGEnEEA0QRussvrFHxk1HWGJskw==}
 
-  remix-auth-form@1.5.0:
-    resolution: {integrity: sha512-xWM7T41vi4ZsIxL3f8gz/D6g2mxrnYF7LnG+rG3VqwHh6l13xCoKLraxzWRdbKMVKKQCMISKZRXAeJh9/PQwBA==}
+  remix-auth-form@3.0.0:
+    resolution: {integrity: sha512-2c8d9BUJhnOrXg2w/iELLMj7RYT9EDI5eip9DSfN8caCTw0V33tNXvUNW44cYJQ8CjwAPi94vVaaezCHEdTSbQ==}
+    engines: {node: '>=20.0.0'}
     peerDependencies:
-      '@remix-run/server-runtime': ^1.0.0 || ^2.0.0
-      remix-auth: ^3.6.0
+      remix-auth: ^4.0.0
 
-  remix-auth@3.7.0:
-    resolution: {integrity: sha512-2QVjp2nJVaYxuFBecMQwzixCO7CLSssttLBU5eVlNcNlVeNMmY1g7OkmZ1Ogw9sBcoMXZ18J7xXSK0AISVFcfQ==}
-    peerDependencies:
-      '@remix-run/react': ^1.0.0 || ^2.0.0
-      '@remix-run/server-runtime': ^1.0.0 || ^2.0.0
+  remix-auth@4.2.0:
+    resolution: {integrity: sha512-3LSfWEvSgG2CgbG/p4ge5hbV8tTXWNnnYIGbTr9oSSiHz9dD7wh6S0MEyo3pwh7MlKezB2WIlevGeyqUZykk7g==}
+    engines: {node: '>=20.0.0'}
 
   require-directory@2.1.1:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
@@ -2865,10 +2863,6 @@ packages:
   utils-merge@1.0.1:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
-
-  uuid@8.3.2:
-    resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
-    hasBin: true
 
   uvu@0.5.6:
     resolution: {integrity: sha512-+g8ENReyr8YsOc6fv/NVJs2vFdHBnBNdfE49rshrTzDWOlUx4Gq7KOS2GD8eqhy2j+Ejq29+SbKH8yjkAqXqoA==}
@@ -5639,16 +5633,11 @@ snapshots:
       mdast-util-to-hast: 12.3.0
       unified: 10.1.2
 
-  remix-auth-form@1.5.0(@remix-run/server-runtime@2.16.8(typescript@5.8.3))(remix-auth@3.7.0(@remix-run/react@2.16.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.3))(@remix-run/server-runtime@2.16.8(typescript@5.8.3))):
+  remix-auth-form@3.0.0(remix-auth@4.2.0):
     dependencies:
-      '@remix-run/server-runtime': 2.16.8(typescript@5.8.3)
-      remix-auth: 3.7.0(@remix-run/react@2.16.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.3))(@remix-run/server-runtime@2.16.8(typescript@5.8.3))
+      remix-auth: 4.2.0
 
-  remix-auth@3.7.0(@remix-run/react@2.16.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.3))(@remix-run/server-runtime@2.16.8(typescript@5.8.3)):
-    dependencies:
-      '@remix-run/react': 2.16.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.3)
-      '@remix-run/server-runtime': 2.16.8(typescript@5.8.3)
-      uuid: 8.3.2
+  remix-auth@4.2.0: {}
 
   require-directory@2.1.1: {}
 
@@ -6076,8 +6065,6 @@ snapshots:
       which-typed-array: 1.1.19
 
   utils-merge@1.0.1: {}
-
-  uuid@8.3.2: {}
 
   uvu@0.5.6:
     dependencies:
